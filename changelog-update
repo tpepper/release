@@ -27,7 +27,7 @@ PROG=${0##*/}
 #+     $PROG  [--help|-man]
 #+
 #+ DESCRIPTION
-#+     Look in kubernetes/CHANGELOG-x.y.md for <tag>'s and update the release
+#+     Look in kubernetes/CHANGELOGS/CHANGELOG-x.y.md for <tag>'s and update the release
 #+     notes with the current ones, prepare a PR and send it out.
 #+
 #+     $PROG must be run inside of a USER github clone.
@@ -143,7 +143,7 @@ for TAG in ${TAGS[*]}; do
   fi
 
   if [[ $TAG =~ ${VER_REGEX[release]} ]]; then
-    CHANGELOG_FILE="CHANGELOG-${BASH_REMATCH[1]}.${BASH_REMATCH[2]}.md"
+    CHANGELOG_FILE="CHANGELOGS\/CHANGELOG-${BASH_REMATCH[1]}.${BASH_REMATCH[2]}.md"
   else
     common::exit 1 "Unable to set CHANGELOG file!"
   fi

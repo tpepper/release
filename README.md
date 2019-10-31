@@ -41,7 +41,7 @@ For information on how to use `gcbmgr`, `anago` and `branchff`, see the [Branch 
 
 [kubernetes/kubernetes]: https://git.k8s.io/kubernetes
 [Branch Manager Handbook]: https://git.k8s.io/sig-release/release-engineering/role-handbooks/branch-manager.md
-[CHANGELOG.md]: https://git.k8s.io/kubernetes/blob/master/CHANGELOG.md
+[CHANGELOG.md]: https://git.k8s.io/kubernetes/blob/master/CHANGELOGS/CHANGELOG.md
 [shot-issue]: https://github.com/kubernetes/sig-release/issues/756#issuecomment-520721968
 
 ## Release Notes Gathering

@@ -173,7 +173,7 @@ logecho -n "Merging $MASTER_OBJECT into $RELEASE_BRANCH branch: "
 # of the branched (deleted) version of those files.
 if ! logrun -s git merge -X ours $MASTER_OBJECT; then
   DELETED_FILES=($(git status -s |\
-                   awk '$1 == "DU" && $2 ~ /CHANGELOG-/ {print $2}'))
+                   awk '$1 == "DU" && $2 ~ /CHANGELOGS\/CHANGELOG-/ {print $2}'))
 
   ((${#DELETED_FILES[*]}==0)) \
    && common::exit "Unable to resolve conflict automatically.  Check $MYLOG"
