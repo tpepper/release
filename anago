@@ -29,7 +29,6 @@ PROG=${0##*/}
 #+            [--basedir=<alt base work dir>]
 #+            [--security_layer=/path/to/pointer/to/script]
 #+            [--exclude-suites="<suite> ..."]
-#+            [--build-at-head]
 #+            [--prebuild] [--buildonly]
 #+            [--mailto=<email1>,<email2>] [--gcb]
 #+            [--tmpdir=</alt/tmp>]
@@ -75,9 +74,6 @@ PROG=${0##*/}
 #+     Simply specify the <branch> you want to release from and follow the
 #+     prompts.  <branch> is one of master, release-1.2, etc. and the release
 #+     is based on the <branch> value and the [--official] flag:
-#+
-#+     WARNING: --build-at-head bypasses any test analysis and builds directly
-#+     at the HEAD Of the named branch.  Mostly for testing.
 #+
 #+     Branch     RC  Official    Type
 #+     ------     --  --------    ----
@@ -129,7 +125,6 @@ PROG=${0##*/}
 #+                                 Default: $HOME/.kubernetes-releaserc
 #+     [--exclude-suites=]       - Space separated list of CI suites regex to
 #+                                 exclude from go/nogo criteria
-#+     [--build-at-head]         - Force a build at HEAD of named branch
 #+     [--mailto=]               - Comma-separated list of addresses to send
 #+                                 announcement email to. Overrides default list.
 #+     [--github-release-draft]  - Force a github release draft for mock runs.
@@ -157,11 +152,10 @@ PROG=${0##*/}
 #+                               - Do a mock official release from release-1.1
 #+     $PROG --nomock --official release-1.1
 #+                               - Do an official release from release-1.1
-#+     $PROG release-1.8 --stage --build-at-head
-#+                               - Stage a HEAD build locally and on GCS
-#+     $PROG release-1.8 --nomock --build-at-head
-#+                               - Release the staged build
-#+                                 (assuming HEAD hasn't changed)
+#+     $PROG release-1.8 --stage --buildversion=v1.14.11-beta.1.2+c8b135d0b49c44
+#+                               - Stage a specific build locally and on GCS
+#+     $PROG release-1.8 --nomock --buildversion=v1.14.11-beta.1.2+c8b135d0b49c44
+#+                               - Release the specific staged build
 #+
 #+ FILES
 #+     build/release.sh

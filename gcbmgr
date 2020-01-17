@@ -28,7 +28,7 @@ PROG=${0##*/}
 #+     $PROG  tail|stream [BUILD_ID]
 #+   Staging:
 #+     $PROG  stage <branch> [--buildversion=<known version>]
-#+             [--build-at-head] [--nomock] [--official] [--rc]
+#+             [--nomock] [--official] [--rc]
 #+   Releasing:
 #+     $PROG  release <branch> --buildversion=<staged build>
 #+             [--nomock] [--official] [--rc]
@@ -70,22 +70,16 @@ PROG=${0##*/}
 #+     # Stage a new master branch release (on passing blocking tests)
 #+     $ $PROG stage master
 #+
-#+     # Stage a new master branch release (at head)
-#+     $ $PROG stage master --build-at-head
+#+     # Find/propose a --buildversion and exit
+#+     $ $PROG stage master
 #+
-#+     # Stage a new release-1.9 branch release (on passing blocking tests)
-#+     $ $PROG stage release-1.9 --official
+#+     # Stage a new release-1.9 branch release (on specific commit)
+#+     $ $PROG stage release-1.9 --official --buildversion=v1.17.1-beta.0.42+d224476cd0730b
 #+
-#+     # Stage a new release-1.9 release candidate (on passing blocking tests)
-#+     $ $PROG stage release-1.9 --rc
+#+     # Stage a new release-1.9 release candidate (on specific commit)
+#+     $ $PROG stage release-1.9 --rc --buildversion=v1.17.1-beta.0.42+d224476cd0730b
 #+
-#+     # Stage a new release-1.9 release candidate (at head)
-#+     $ $PROG stage release-1.9 --rc --build-at-head
-#+
-#+     # Stage a new release-1.9 branch release (at head)
-#+     $ $PROG stage release-1.9 --official --build-at-head
-#+
-#+     # Release a previously staged build
+#+     # Release a previously staged specific build
 #+     $ $PROG release release-1.8 --buildversion=v1.8.8-beta.0.72+cce11c6a185279
 #+
 #+ OPTIONS
@@ -103,8 +97,6 @@ PROG=${0##*/}
 #+                                 --nomock, both stage/*-$GCP_USER
 #+                                 & stage/*-gcb builds are shown and
 #+                                 available for release.
-#+     --build-at-head           - Build directly from head. Do not analyze
-#+                                 test data to pick a candidate.
 #+     --nomock                  - Stage a non-mocked release build to prepare
 #+                                 for an actual release.
 #+     --official                - For release-* branches, stage an official
@@ -121,13 +113,11 @@ PROG=${0##*/}
 #+ EXAMPLES
 #+     $PROG                     - Default 'list' behavior
 #+     $PROG stream              - Show the most recent active log
-#+     $PROG stage master --build-at-head
-#+                               - Stage a build at head on the master branch
-#+     $PROG stage release-1.8 --official
-#+                               - Analyze test data to find a candidate and
-#+                                 stage an official build for release in mock
-#+                                 mode.
-#+     $PROG stage release-1.8 --official --nomock
+#+     $PROG stage master        - Find/propose --buildversion and exit
+#+     $PROG stage release-1.8 --official --buildversion=v1.17.1-beta.0.42+d224476cd0730b
+#+                               - Stage an official build for release in mock
+#+                                 mode at a specific commit.
+#+     $PROG stage release-1.8 --official --nomock --buildversion=v1.17.1-beta.0.42+d224476cd0730b
 #+                               - Same as above but stage in non-mock bucket.
 #+
 #+ FILES
@@ -293,7 +283,7 @@ submit_it () {
   substitutions="_OFFICIAL_TAG=$OFFICIAL_TAG,_NOMOCK_TAG=$NOMOCK_TAG,_RC_TAG=$RC_TAG"
   substitutions+=",_BUILD_POINT=$BUILD_POINT,_GCP_USER_TAG=$GCP_USER_TAG"
 
-  [[ $COMMAND == stage ]] && substitutions+=",_BUILD_AT_HEAD=$BUILD_AT_HEAD" && substitutions+=",_KUBE_CROSS_VERSION=$KUBE_CROSS_VERSION"
+  [[ $COMMAND == stage ]] && substitutions+=",_KUBE_CROSS_VERSION=$KUBE_CROSS_VERSION"
 
   # The usual suspects
   substitutions+=",_RELEASE_BRANCH=$RELEASE_BRANCH,_OFFICIAL=$OFFICIAL,_RC=$RC"
@@ -418,11 +408,6 @@ elif ((FLAGS_rc)); then
   RC="--$RC_TAG"
 fi
 
-if ((FLAGS_build_at_head)); then
-  BUILD_POINT="HEAD"
-  BUILD_AT_HEAD="--build-at-head"
-fi
-
 if ((FLAGS_nomock)); then
   NOMOCK_TAG="nomock"
   NOMOCK="--$NOMOCK_TAG"
@@ -432,7 +417,6 @@ else
 fi
 
 # BUILD_POINT used in yaml tags field and is one of:
-# * HEAD (from --build-at-head)
 # * Value of FLAGS_buildversion
 # * Defaulting to searching for a build using find_green_build
 #
